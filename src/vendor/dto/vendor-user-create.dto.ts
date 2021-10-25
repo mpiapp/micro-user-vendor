@@ -1,3 +1,4 @@
+import { Prop } from "@nestjs/mongoose"
 import { ApiProperty } from "@nestjs/swagger"
 import { IsIn, IsMongoId, IsOptional } from "class-validator"
 
@@ -15,8 +16,16 @@ export class VendorUserCreateDTO {
     email: string
 
     @ApiProperty()
-    @IsIn(['BUYER', 'VENDOR'])
-    flag: string
+    @Prop()
+    vendor_id: string
+
+    @ApiProperty()
+    @Prop()
+    fullname: string
+
+    @ApiProperty()
+    @Prop()
+    role_id: string
 
     @ApiProperty()
     @IsIn(['ACTIVE', 'INACTIVE'])
