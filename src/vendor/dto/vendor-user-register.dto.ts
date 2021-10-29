@@ -1,5 +1,4 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { IsIn } from "class-validator"
 
 export class VendorUserRegisterDTO {
 
@@ -8,8 +7,4 @@ export class VendorUserRegisterDTO {
 
     @ApiProperty()
     password: string
-
-    @ApiProperty()
-    @IsIn(['BUYER', 'VENDOR'])
-    flag: string
 }

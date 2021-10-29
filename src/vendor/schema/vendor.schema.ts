@@ -18,8 +18,15 @@ export class VendorUser {
 
     @ApiProperty()
     @Prop()
-    @IsIn(['BUYER', 'VENDOR'])
-    flag: string
+    vendor_id: string
+
+    @ApiProperty()
+    @Prop()
+    fullname: string
+
+    @ApiProperty()
+    @Prop()
+    role_id: string
 
     @ApiProperty()
     @Prop()

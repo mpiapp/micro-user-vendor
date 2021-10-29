@@ -7,12 +7,12 @@ import { VendorUserRegisterDTO } from './dto/vendor-user-register.dto';
 import { UserEmailDTO } from './dto/user-email.dto';
 import { VendorUser } from './schema/vendor.schema';
 
-@Controller('admin')
+@Controller('vendor')
 export class VendorController {
 
     constructor( private readonly vendorService:VendorService ){}
 
-    @ApiCreatedResponse({ type: VendorUser, description: 'register an admin-user' })
+    @ApiCreatedResponse({ type: VendorUser, description: 'register a vendor-user' })
     @ApiBadRequestResponse({ description: 'False Request Payload' })
     @Post('register')
     async register(@Body() body: VendorUserRegisterDTO): Promise<VendorUserCreateDTO> {
@@ -23,11 +23,13 @@ export class VendorController {
             let userPayload: VendorUserCreateDTO = {
                 auth_id: registeredUser['_id'] ? registeredUser['_id'] : "",
                 email: registeredUser['email'] ? registeredUser['email'] : "",
-                flag: ['BUYER', 'VENDOR'].includes(body['flag']) ? body['flag'] : "",
-                status: 'ACTIVE',
+                vendor_id: body['vendor_id'] ? body['vendor_id'] : "",
+                fullname: body['fullname'] ? body['fullname'] : "",
+                role_id: body['role_id'] ? body['role_id'] : "",
+                status: 'ACTIVE'
             }
-
-            if( userPayload.flag !== "" ) return this.vendorService.registerCreate(userPayload)
+            
+            return this.vendorService.registerCreate(userPayload)
         }
         throw new UnauthorizedException()
     }
@@ -56,7 +58,7 @@ export class VendorController {
         throw new UnauthorizedException()
     }
 
-    @UseGuards(LoginAuthenticationGuard)
+    // @UseGuards(LoginAuthenticationGuard)
     @ApiOkResponse({ description: 'checked user access' })
     @ApiBadRequestResponse({ description: 'False Request Payload' })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
