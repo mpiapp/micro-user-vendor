@@ -19,7 +19,7 @@ export class VendorController {
         const registeredUser = await this.vendorService.register(body)
 
         /* istanbul ignore next */      // ignored for automatic registering user
-        if( registeredUser !== 'error' ) {
+        if( !registeredUser.error ) {
             let userPayload: VendorUserCreateDTO = {
                 auth_id: registeredUser['_id'] ? registeredUser['_id'] : "",
                 email: registeredUser['email'] ? registeredUser['email'] : "",
@@ -42,7 +42,7 @@ export class VendorController {
         const loginedUser = await this.vendorService.login(body)
 
         /* istanbul ignore next */      // ignored for automatic login user
-        if(loginedUser !== 'error') return loginedUser
+        if(!loginedUser.error) return loginedUser
         throw new UnauthorizedException()
     }
 

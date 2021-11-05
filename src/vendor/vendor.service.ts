@@ -36,8 +36,8 @@ export class VendorService {
             return registeredUser.data
 
         } catch (error) {
-            console.log(error.response.data)
-            return 'error'
+            // console.log(error.response.data)
+            return { error: true, ...error.response.data }
         }
     }
 
@@ -59,8 +59,8 @@ export class VendorService {
             }
 
         } catch (error) {
-            console.log(error.response.data)
-            return 'error'
+            // console.log(error.response.data)
+            return { error: true, ...error.response.data }
         }
     }
 

@@ -63,19 +63,19 @@ describe('VendorService', () => {
   })
   
   it(`should not register a user if password not contain uppercase`, async () => {
-    expect(await service.register(FalseRegisterPayloadLowercasePass)).toMatch('error')
+    expect(await service.register(FalseRegisterPayloadLowercasePass)).toEqual({"error": true})
   })
 
   it(`should not register a user if password not contain lowercase`, async () => {
-    expect(await service.register(FalseRegisterPayloadUppercasePass)).toMatch('error')
+    expect(await service.register(FalseRegisterPayloadUppercasePass)).toEqual({"error": true})
   })
 
   it(`should not register a user if password not contain number`, async () => {
-    expect(await service.register(FalseRegisterPayloadNoNumberPass)).toMatch('error')
+    expect(await service.register(FalseRegisterPayloadNoNumberPass)).toEqual({"error": true})
   })
 
   it(`should not register a user if password not contain alphabet`, async () => {
-    expect(await service.register(FalseRegisterPayloadOnlyNumberPass)).toMatch('error')
+    expect(await service.register(FalseRegisterPayloadOnlyNumberPass)).toEqual({"error": true})
   })
 
   // login
@@ -104,19 +104,19 @@ describe('VendorService', () => {
   })
 
   it(`should not login a user if password not contain uppercase`, async () => {
-    expect(await service.login(FalseRegisterPayloadLowercasePass)).toMatch('error')
+    expect(await service.login(FalseRegisterPayloadLowercasePass)).toEqual({"error": true})
   })
 
   it(`should not login a user if password not contain lowercase`, async () => {
-    expect(await service.login(FalseRegisterPayloadUppercasePass)).toMatch('error')
+    expect(await service.login(FalseRegisterPayloadUppercasePass)).toEqual({"error": true})
   })
 
   it(`should not login a user if password not contain number`, async () => {
-    expect(await service.login(FalseRegisterPayloadNoNumberPass)).toMatch('error')
+    expect(await service.login(FalseRegisterPayloadNoNumberPass)).toEqual({"error": true})
   })
 
   it(`should not login a user if password not contain alphabet`, async () => {
-    expect(await service.login(FalseRegisterPayloadOnlyNumberPass)).toMatch('error')
+    expect(await service.login(FalseRegisterPayloadOnlyNumberPass)).toEqual({"error": true})
   })
 
   // check-access
