@@ -22,13 +22,20 @@ export class VendorController {
 
         /* istanbul ignore next */      // ignored for automatic registering user
         if( !registeredUser.error ) {
+            
+            let checked_company = await this.vendorService.find({ vendor_id: body['vendor_id'] })
+
             let userPayload: VendorUserCreateDTO = {
-                auth_id: registeredUser['_id'] ? registeredUser['_id'] : "",
-                email: registeredUser['email'] ? registeredUser['email'] : "",
-                vendor_id: body['vendor_id'] ? body['vendor_id'] : "",
-                fullname: body['fullname'] ? body['fullname'] : "",
-                role_id: body['role_id'] ? body['role_id'] : "",
-                status: 'ACTIVE'
+                auth_id: registeredUser['_id'],
+                email: registeredUser['email'],
+                vendor_id: body['vendor_id'],
+                fullname: body['fullname'],
+                role_id: body['role_id'],
+                modules: body['modules'] ? body['modules'] : [],
+                features: body['features'] ? body['features'] : [],
+                capabilities: body['capabilities'] ? body['capabilities'] : [],
+                status: 'ACTIVE',
+                isOwner: checked_company.length ? false : true,
             }
             
             return this.vendorService.registerCreate(userPayload)

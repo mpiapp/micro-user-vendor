@@ -30,4 +30,21 @@ export class VendorUserCreateDTO {
     @ApiProperty()
     @IsIn(['ACTIVE', 'INACTIVE'])
     status: string
+
+    @ApiProperty()
+    @Prop()
+    @IsIn([true, false])
+    isOwner: boolean
+
+    @ApiProperty()
+    @Prop()
+    modules?: Array<string>
+
+    @ApiProperty()
+    @Prop()
+    features?: Array<string>
+    
+    @ApiProperty()
+    @Prop()
+    capabilities?: Array<string>
 }
