@@ -1,11 +1,13 @@
-import { Body, Controller, Post, UnauthorizedException, Headers, UseGuards } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { LoginAuthenticationGuard } from '../authz/authz.guard';
+import { Body, Controller, Post, UnauthorizedException, Headers, UseGuards, Get, Query, Param, Put } from '@nestjs/common';
+import { ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { LoginAuthenticationGuard, LoginCompanyOwnerAuthenticationGuard, LoginProfileAuthenticationGuard } from '../authz/authz.guard';
 import { VendorService } from './vendor.service';
 import { VendorUserCreateDTO } from './dto/vendor-user-create.dto';
 import { VendorUserRegisterDTO } from './dto/vendor-user-register.dto';
 import { UserEmailDTO } from './dto/user-email.dto';
 import { VendorUser } from './schema/vendor.schema';
+import { IdDTO } from './dto/id.dto';
+import { UpdateVendorUserDTO } from './dto/update-vendor-user.dto';
 
 @Controller('vendor')
 export class VendorController {
@@ -20,13 +22,20 @@ export class VendorController {
 
         /* istanbul ignore next */      // ignored for automatic registering user
         if( !registeredUser.error ) {
+            
+            let checked_company = await this.vendorService.find({ vendor_id: body['vendor_id'] })
+
             let userPayload: VendorUserCreateDTO = {
-                auth_id: registeredUser['_id'] ? registeredUser['_id'] : "",
-                email: registeredUser['email'] ? registeredUser['email'] : "",
-                vendor_id: body['vendor_id'] ? body['vendor_id'] : "",
-                fullname: body['fullname'] ? body['fullname'] : "",
-                role_id: body['role_id'] ? body['role_id'] : "",
-                status: 'ACTIVE'
+                auth_id: registeredUser['_id'],
+                email: registeredUser['email'],
+                vendor_id: body['vendor_id'],
+                fullname: body['fullname'],
+                role_id: body['role_id'],
+                modules: body['modules'] ? body['modules'] : [],
+                features: body['features'] ? body['features'] : [],
+                capabilities: body['capabilities'] ? body['capabilities'] : [],
+                status: 'ACTIVE',
+                isOwner: checked_company.length ? false : true,
             }
             
             return this.vendorService.registerCreate(userPayload)
@@ -66,4 +75,54 @@ export class VendorController {
     async change_password(@Body() email: UserEmailDTO ): Promise<any> {
         return this.vendorService.changePassword(email)
     }
+
+    @ApiOkResponse({ description: 'checked user access' })
+    @ApiBadRequestResponse({ description: 'False Request Payload' })
+    @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+    @Get()
+    async fetch_vendors(
+        @Query() queries: any
+    ): Promise<any> {
+        return this.vendorService.find(queries)
+    }
+
+    @ApiOkResponse({ description: 'checked user access' })
+    @ApiBadRequestResponse({ description: 'False Request Payload' })
+    @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+    @UseGuards(LoginCompanyOwnerAuthenticationGuard)
+    @Get('company-owner')
+    async fetch_vendors_company_owner(
+        @Query() queries: any,
+        @Headers() headers: object
+    ): Promise<any> {
+
+        if( !headers['vendor_company_id'] ) throw new UnauthorizedException('Not an owner')
+        
+        queries['vendor_id'] = headers['vendor_company_id']
+        return this.vendorService.find(queries)
+    }
+
+    @ApiOkResponse({ type: VendorUser, description: 'get a vendor user by auth_id' })
+    @ApiBadRequestResponse({ description: 'False Request Payload' })
+    @ApiParam({ name: 'auth_id', required: true })
+    @UseGuards(LoginProfileAuthenticationGuard)
+    @Get(':auth_id')
+    async findById(
+        @Param('auth_id') id: IdDTO
+    ): Promise<VendorUser> {
+        return this.vendorService.findById(id)
+    }
+
+    @ApiCreatedResponse({ type: VendorUser, description: 'update a vendor user' })
+    @ApiBadRequestResponse({ description: 'False Request Payload' })
+    @ApiParam({ name: 'auth_id', required: true })
+    @UseGuards(LoginCompanyOwnerAuthenticationGuard)
+    @Put(':auth_id')
+    async update(
+        @Param('auth_id') id: IdDTO, 
+        @Body() body: UpdateVendorUserDTO
+    ): Promise<VendorUser> {
+        return this.vendorService.update(id, body)
+    }
+
 }
