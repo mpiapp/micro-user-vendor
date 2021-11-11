@@ -6,7 +6,7 @@ import { VendorUser } from './schema/vendor.schema';
 import * as requester from 'axios';
 import * as MockAdapter from 'axios-mock-adapter';
 import * as dotenv from 'dotenv';
-import { EmailPayload, FalseRegisterPayloadLowercasePass, FalseRegisterPayloadNoNumberPass, FalseRegisterPayloadOnlyNumberPass, FalseRegisterPayloadUppercasePass, RegisterCreatePayload, RegisterCreatePayloadSuccess, TrueRegisterPayload } from './mocks/vendor-payload.mock';
+import { ArrayOfObjectVendors, EmailPayload, FalseRegisterPayloadLowercasePass, FalseRegisterPayloadNoNumberPass, FalseRegisterPayloadOnlyNumberPass, FalseRegisterPayloadUppercasePass, MockId, RegisterCreatePayload, RegisterCreatePayloadSuccess, StringMockId, SuccsessGetVendorByAuthId, SuccsessUpdateVendor, TrueRegisterPayload } from './mocks/vendor-payload.mock';
 
 dotenv.config();
 
@@ -39,6 +39,22 @@ describe('VendorService', () => {
   it(`should create a user after register success`, async () => {
     expect(await service.registerCreate(RegisterCreatePayload)).toEqual(RegisterCreatePayloadSuccess)
   })
+
+  it('should get list of vendors with queries', async () => {
+    expect(await service.find({ fullname:'test', vendor_id: '123' })).toEqual(ArrayOfObjectVendors);
+  });
+
+  it('should get list of vendors with no queries', async () => {
+    expect(await service.find({})).toEqual(ArrayOfObjectVendors);
+  });
+
+  it('should update a vendor', async () => {
+    expect(await service.update(MockId,RegisterCreatePayload)).toEqual(SuccsessUpdateVendor(StringMockId));
+  });
+
+  it('should get a vendor', async () => {
+    expect(await service.findById(MockId)).toEqual(SuccsessGetVendorByAuthId(StringMockId));
+  });
 
   // register
   it(`should register a user & save to the database successfully`, async () => {

@@ -7,6 +7,7 @@ import * as requester from 'axios';
 import * as dotenv from 'dotenv';
 import { VendorUserCreateDTO } from './dto/vendor-user-create.dto';
 import { UserEmailDTO } from './dto/user-email.dto';
+import { UpdateVendorUserDTO } from './dto/update-vendor-user.dto';
 
 dotenv.config();
 
@@ -14,6 +15,24 @@ dotenv.config();
 export class VendorService {
 
     constructor( @InjectModel(VendorUser.name) private readonly vendorModel:Model<VendorUserDocument> ) {}
+
+    async find(q): Promise<VendorUser[]> {
+        let condition = {}
+
+        if( q["fullname"] ) condition['fullname'] = { $regex: '.*' + q['fullname'] + '.*' }
+        if( q["vendor_id"] ) condition['vendor_id'] = q["vendor_id"]
+
+        return this.vendorModel.find(condition)
+    }
+
+    async findById(id: any): Promise<VendorUser> {
+        return this.vendorModel.findOne({ auth_id: id })
+    }
+
+    async update(id: any, body: UpdateVendorUserDTO ): Promise<VendorUser> {
+        await this.vendorModel.findOneAndUpdate({auth_id: id}, body)
+        return this.findById(id)
+    }
 
     async registerCreate( user: VendorUserCreateDTO ): Promise<any> {
         return this.vendorModel.create(user)
