@@ -1,6 +1,6 @@
 import { Body, Controller, Post, UnauthorizedException, Headers, UseGuards, Get, Query, Param, Put } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { LoginAuthenticationGuard } from '../authz/authz.guard';
+import { LoginAuthenticationGuard, LoginCompanyOwnerAuthenticationGuard, LoginProfileAuthenticationGuard } from '../authz/authz.guard';
 import { VendorService } from './vendor.service';
 import { VendorUserCreateDTO } from './dto/vendor-user-create.dto';
 import { VendorUserRegisterDTO } from './dto/vendor-user-register.dto';
@@ -89,7 +89,7 @@ export class VendorController {
     @ApiOkResponse({ description: 'checked user access' })
     @ApiBadRequestResponse({ description: 'False Request Payload' })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-    // @UseGuards(LoginCompanyOwnerAuthenticationGuard)     // must make login company owner guards
+    @UseGuards(LoginCompanyOwnerAuthenticationGuard)
     @Get('company-owner')
     async fetch_vendors_company_owner(
         @Query() queries: any,
@@ -105,7 +105,7 @@ export class VendorController {
     @ApiOkResponse({ type: VendorUser, description: 'get a vendor user by auth_id' })
     @ApiBadRequestResponse({ description: 'False Request Payload' })
     @ApiParam({ name: 'auth_id', required: true })
-    // @UseGuards(LoginProfileAuthenticationGuard)          // must make login profile guards
+    @UseGuards(LoginProfileAuthenticationGuard)
     @Get(':auth_id')
     async findById(
         @Param('auth_id') id: IdDTO
@@ -116,7 +116,7 @@ export class VendorController {
     @ApiCreatedResponse({ type: VendorUser, description: 'update a vendor user' })
     @ApiBadRequestResponse({ description: 'False Request Payload' })
     @ApiParam({ name: 'auth_id', required: true })
-    // @UseGuards(LoginCompanyOwnerAuthenticationGuard)         // must make login company owner guards
+    @UseGuards(LoginCompanyOwnerAuthenticationGuard)
     @Put(':auth_id')
     async update(
         @Param('auth_id') id: IdDTO, 
