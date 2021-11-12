@@ -40,7 +40,7 @@ export class VendorController {
             
             return this.vendorService.registerCreate(userPayload)
         }
-        throw new UnauthorizedException()
+        throw new UnauthorizedException(registeredUser)
     }
 
     @ApiOkResponse({ description: 'logined a user' })
@@ -52,7 +52,7 @@ export class VendorController {
 
         /* istanbul ignore next */      // ignored for automatic login user
         if(!loginedUser.error) return loginedUser
-        throw new UnauthorizedException()
+        throw new UnauthorizedException(loginedUser)
     }
 
     @ApiOkResponse({ description: 'checked user access' })
